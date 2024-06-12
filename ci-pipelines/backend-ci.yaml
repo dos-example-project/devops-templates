@@ -23,7 +23,7 @@ jobs:
       ## QualityCode Scan (SonarQube)
       - uses: ../helpers/sonar-scan.yaml
 
-      ## Security Scan (Can be Snyk, polaris,...)
+      ## Security Scan code and docker(Can be Snyk, polaris,...)
       - uses: ../helpers/security-scan.yaml
 
       ## Publish Docker Image tag
