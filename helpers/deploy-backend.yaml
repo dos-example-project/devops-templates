@@ -1,6 +1,6 @@
 ### This helpers will 
 ### - Download helm artifact from ci pipeline or artifact storage (with selected version)
-
+### - Deploy new helm Chart with new docker tag
 
 inputs:
   service-name:
