@@ -1,0 +1,27 @@
+### This helpers will 
+### - Download helm artifact from ci pipeline or artifact storage (with selected version)
+
+
+inputs:
+  service-name:
+    description: 'Name of Service'
+    required: true
+  docker-tag:
+    description: 'Version of Service'
+    required: true
+  kube-auth:
+    description: 'kubernetes cluster authorization'
+    required: true
+
+steps:
+  ### Download Artifact And Deploy On Dev env
+  - uses: actions/checkout@v4
+  - download: 
+    # Download Helm Artifact from ci pipeline or artifact storage 
+  - deploy-helm-mutiple-cluster: 
+    # This step depend on multi-cluster engineer.
+    # For example: we use Consul hashicorp to manage multi-cluster
+    # We only need to deploy helm chart to one of clusters, Consul will automatic distribute to All cluster (depend on business requierment)
+    # Docker Image tag: from input docker-tag
+    # kubernetes cluster authentication from input kube-auth
+

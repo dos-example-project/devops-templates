@@ -1,0 +1,23 @@
+### This template  deploy new version into production env:
+
+inputs:
+  service-name:
+    description: 'Name of Service'
+    required: true
+  release-version:
+    description: 'new release version'
+  kube-auth-prod:
+    description: 'kubernetes cluster PROD authorization config'
+
+jobs:
+  deploy-dev:   ## Deploy build docker image to DEV environment
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ../helpers/deploy-backend.yaml
+        inputs:
+          serviceName: INPUT_SERVICE_NAME
+          dockerTag: INPUT_DOCKER_TAG
+          kubernetesAuthDev: INPUT_KUBE_AUTH_PROD
+
+      ## Notify Slack
+      - uses: ../helpers/slack-notify.yaml

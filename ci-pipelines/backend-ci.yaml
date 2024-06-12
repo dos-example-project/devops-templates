@@ -1,0 +1,39 @@
+### This template for CI pipeline:
+###   - test + build application by docker.
+###   - scan code
+###   - publish built artifact and Docker tag with $BUILD_ID
+### ** BUILD_ID is Identity of pipeline once it's triggred.
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      ## Basic step to Validate + Install + Build Application
+      ### Test
+      - uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+      - run: npm ci
+      - run: npm test
+      ### Build Docker Image
+      - run: docker build ...
+
+      ## QualityCode Scan (SonarQube)
+      - uses: ../helpers/sonar-scan.yaml
+
+      ## Security Scan (Can be Snyk, polaris,...)
+      - uses: ../helpers/security-scan.yaml
+
+      ## Publish Docker Image tag
+      - ...
+
+      ## Publish Helm folder to artifact
+      - ...
+      
+      ## Notify Slack
+      - uses: ../helpers/slack-notify.yaml
+
+
+

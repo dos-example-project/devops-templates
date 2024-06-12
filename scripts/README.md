@@ -1,0 +1,1 @@
+### Some script can be created to handle specials problem in pipelines.

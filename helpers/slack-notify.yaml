@@ -1,0 +1,21 @@
+steps:
+  ## Notify Slack
+  - name: Notify slack success
+    if: success()
+    env:
+      SLACK_BOT_TOKEN: ${{ secrets.SLACK_NOTIFICATIONS_BOT_TOKEN }}
+    uses: caraway-health/github-action-slack-notify-build@1.0.0
+    with:
+      channel: app-alerts
+      status: SUCCESS
+      color: good
+  
+  - name: Notify slack fail
+    if: failure()
+    env:
+      SLACK_BOT_TOKEN: ${{ secrets.SLACK_NOTIFICATIONS_BOT_TOKEN }}
+    uses: caraway-health/github-action-slack-notify-build@1.0.0
+    with:
+      channel: app-alerts
+      status: FAILED
+      color: danger

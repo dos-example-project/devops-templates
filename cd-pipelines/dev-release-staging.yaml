@@ -1,0 +1,78 @@
+### This template for CD pipeline with 4 stages:
+###  - Deploy DEV: (when CI pipeline is success)
+###     + Download Helm Artifact and Get dockerTag from ci pipeline.
+###     + Deploy built Helm Artifact and dockerTag from ci pipeline to Dev environment
+###  - Release Version: (When testing is done on Dev environment)
+###     + Tagged helm chart and docker tag with new version
+###     + Publish them to docker registry and Artifact Storage
+###     + Create new tag on git repository with new version (option)
+###     + Update CHANGELOG (option)
+###  - Deploy Staging: (After new version is released)
+###     + Download Helm Artifact with new released version from last stage.
+###     + Deploy new released version into Staging environment
+###  - Load testing:
+###     + Load testing Staging environment(K6, Jmeter,...).
+
+inputs:
+  service-name:
+    description: 'Name of Service'
+    required: true
+  docker-tag: # Depend on each CI/CD tool, we have mutiple way to get docker tag built from ci pipeline.
+    description: 'Version of Service'
+    required: true
+  release-version:
+    description: 'new release version'
+  kube-auth-dev:
+    description: 'kubernetes cluster Dev authorization config'
+    #default: 
+    #  name: "k8s-dev"
+    #  host: "1.2.3.4"
+    #  authMode: configFile
+    #  ...
+  kube-auth-stg:
+    description: 'kubernetes cluster STG authorization config'
+
+jobs:
+  deploy-dev:   ## Deploy build docker image to DEV environment
+    runs-on: ubuntu-latest
+    steps:
+
+      - uses: ../helpers/deploy-backend.yaml
+        inputs:
+          serviceName: INPUT_SERVICE_NAME
+          dockerTag: INPUT_DOCKER_TAG
+          kubernetesAuthDev: INPUT_KUBE_AUTH_DEV
+      ## Notify Slack
+      - uses: ../helpers/slack-notify.yaml
+
+  release:  ## Release 
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ../helpers/release.yaml
+        inputs:
+          serviceName: INPUT_SERVICE_NAME
+          dockerTag: INPUT_DOCKER_TAG
+          ReleaseVersion: INPUT_RELEASE_VERSION
+      ## Notify Slack
+      - uses: ../helpers/slack-notify.yaml
+
+
+  deploy-stg:   ## Deploy build docker image to STG environment
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ../helpers/deploy-backend.yaml
+        inputs:
+          serviceName: INPUT_SERVICE_NAME
+          dockerTag: INPUT_RELEASE_VERSION
+          kubernetesAuthDev: INPUT_KUBE_AUTH_STG
+      ## Notify Slack
+      - uses: ../helpers/slack-notify.yaml
+
+  load-test:  ## Load Testing 
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ../helpers/load-test.yaml
+        inputs:
+          load-test-configure: INPUT_load-test-configure
+      ## Notify Slack
+      - uses: ../helpers/slack-notify.yaml
