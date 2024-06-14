@@ -76,3 +76,12 @@ jobs:
           load-test-configure: INPUT_load-test-configure
       ## Notify Slack
       - uses: ../helpers/slack-notify.yaml
+
+  infra-test:  ## Infra Testing 
+    runs-on: ubuntu-latest
+    steps:
+      - uses: ../helpers/zap-test.yaml
+        inputs:
+          load-test-configure: INPUT_zap-test-configure
+      ## Notify Slack
+      - uses: ../helpers/slack-notify.yaml
